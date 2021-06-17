@@ -1,0 +1,67 @@
+{% extends 'store/staff/main.html' %} {% load static %} {% block content %}
+
+<div class="d-flex flex-column align-items-center text-center col-sm-12">
+  <h2>Thông tin danh sách đơn hàng mới</h2>
+</div>
+<div class="d-flex flex-column align-items-center text-center col-sm-12">
+  <div class="search">
+    <input type="text" placeholder=" Search By Order Code" name="search" />
+    <button>
+      <i class="fa fa-search" style="font-size: 18px"> </i>
+    </button>
+  </div>
+</div>
+<div class="card mb-3">
+<div class="card-body">
+<div class="align-items-center tablecontent">
+    <table>
+        <thead>
+          <tr>
+            <td>Mã đơn hàng</td>
+            <td>Tên khách hàng</td>
+            <td>Tổng tiền</td>
+            <td>Số lượng</td>
+            <td>Trạng thái đơn hàng</td>
+            <td>Ngày giao nhận</td>
+            <td colspan="4">Hành động</td>
+          </tr>
+        </thead>
+        <tbody>
+          {%for item in all_new_shipping%}
+            <tr>
+              <td>{{item.order.id}}</td>
+              <td>{{item.customer.user}}</td>
+              <td>{{item.order.get_cart_total}}</td>
+              <td>{{item.order.get_cart_items}}</td>
+              {%if item.status == "New"%}
+                <td style="color: rgb(9, 197, 15);">{{item.status}}</td>
+              {%else%}
+                <td style="color: coral">{{item.status}}</td>
+              {%endif%}
+              <td>{{item.order_date}}</td>
+              {%if item.status == "New" or item.status == "Pending"%}
+                <td><button data-shippingid="{{item.id}}" data-action="CANCEL_ORDER" name="cancleorder"  style="color:aliceblue;background-color: crimson;" class="btn mb-0 col-sm-12">Hủy </button></td>
+                <td><button data-shippingid="{{item.id}}" data-action="OUT_DELIVERY_ORDER" name="outdelivery"  style="color:aliceblue;background-color: cadetblue;" class="btn mb-0 col-sm-12">Dã giao cho bên giao vận</button></td>
+              {%else%}
+                <td><button class="btn mb-0 col-sm-12" style="color:aliceblue;background-color: crimson;" disabled>Hủy</button></td>
+                <td><button  style="color:aliceblue;background-color: cadetblue;" class="btn mb-0 col-sm-12">Dã giao cho bên giao vận</button></td>
+              {%endif%}
+              {%if item.status == "New" or item.status == "Out for delivery"%}
+                <td><button  data-shippingid="{{item.id}}" data-action="PENDING" name="pending" class="btn mb-0 col-sm-12" style="color:aliceblue;background-color: coral;">Chờ</button></td>
+              {%else%}
+                <td><button class="btn mb-0 col-sm-12" style="color:aliceblue;background-color: coral;" disabled>Chờ</button></td>
+              {%endif%}
+              {%if item.status == "Cancel" or item.status == "Pending" or item.status == "Delivered"%}
+                <td><button  disabled clickable class="btn btn-success mb-0 col-sm-12">Xác nhận đã vận chuyển</button></td>
+              {%else%}
+                <td><button  data-shippingid="{{item.id}}" data-action="CONFIRM_ORDER" name="confirmorder" class="btn btn-success mb-0 col-sm-12" >Xác nhận đã vận chuyển</button></td>
+              {%endif%}
+            </tr>
+          {%endfor%}
+        </tbody>
+      </table>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="{% static 'js/staff.js' %}"></script>
+{% endblock content %}
